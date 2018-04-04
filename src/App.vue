@@ -9,6 +9,11 @@
 <script>
 export default {
   name: 'App',
+  updated () {
+    if (!localStorage.token && this.$route.path !== '/') {
+      this.$router.push('/?redirect=' + this.$route.path)
+    }
+  }
 };
 </script>
 

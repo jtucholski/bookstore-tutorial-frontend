@@ -2,6 +2,7 @@
   <div class='login-wrapper'>
     <form class='form-signin' @submit.prevent='login'>
       <h3 class='form-signin-heading'>Please Sign In</h3>
+      <div v-if="error" class='alert alert-danger'>{{ error }}</div>
 
 			<label for="inputEmail" class="sr-only">Email address</label>
       <input v-model="email" type="email" id="inputEmail" class="form-control"
@@ -24,14 +25,48 @@ export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      error: false
     }
   },
+
+  created () {
+    this.checkCurrentLogin()
+  },
+
+  updated () {
+    this.checkCurrentLogin()
+  },
+
   methods: {
+    checkCurrentLogin () {
+      if (localStorage.token) {
+        this.$router.replace(this.$route.query.redirect || '/authors')
+      }
+    },
+
     login () {
-      console.log(this.email)
-      console.log(this.password)
-    }
+      this.$http.post('/auth', { user: this.email, password: this.password })
+        .then(request => this.loginSuccessful(request))
+        .catch(() => this.loginFailed())
+    },
+
+    loginFailed () {
+      this.error = 'Login Failed'
+      delete localStorage.token
+    },
+
+    loginSuccessful (req) {
+      if (!req.data.token) {
+        this.loginFailed()
+        return
+      }
+
+      localStorage.token = req.data.token
+      this.error = false
+
+      this.$router.replace(this.$route.query.redirect || '/authors')
+    },
   }
 }
 </script>
