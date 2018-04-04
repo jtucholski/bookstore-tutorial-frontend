@@ -4,7 +4,7 @@ import User from '@/models/User';
 import * as MutationTypes from '@/store/mutationTypes';
 
 const state = {
-  user: User.from(localStorage.token)
+  user: User.from(localStorage.token),
 };
 
 const mutations = {
@@ -13,13 +13,13 @@ const mutations = {
   },
   [MutationTypes.LOGOUT](state) {
     state.user = null;
-  }
+  },
 };
 
 const getters = {
   currentUser(state) {
     return state.user;
-  }
+  },
 };
 
 const actions = {
@@ -29,12 +29,12 @@ const actions = {
 
   logout({ commit }) {
     commit(MutationTypes.LOGOUT);
-  }
+  },
 };
 
 export default {
   state,
   mutations,
   getters,
-  actions
+  actions,
 };

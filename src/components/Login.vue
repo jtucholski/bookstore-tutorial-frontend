@@ -4,7 +4,7 @@
       <h3 class='form-signin-heading'>Please Sign In</h3>
       <div v-if="error" class='alert alert-danger'>{{ error }}</div>
 
-			<label for="inputEmail" class="sr-only">Email address</label>
+      <label for="inputEmail" class="sr-only">Email address</label>
       <input v-model="email" type="email" id="inputEmail" class="form-control"
              placeholder="Email address" required autofocus>
 
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'Login',
   data () {
@@ -38,9 +40,13 @@ export default {
     this.checkCurrentLogin()
   },
 
+  computed: {
+    ...mapGetters({ currentUser: 'currentUser' })
+  },
+
   methods: {
     checkCurrentLogin () {
-      if (localStorage.token) {
+      if (this.currentUser) {
         this.$router.replace(this.$route.query.redirect || '/authors')
       }
     },
@@ -53,6 +59,7 @@ export default {
 
     loginFailed () {
       this.error = 'Login Failed'
+      this.$store.dispatch('logout')
       delete localStorage.token
     },
 
@@ -62,8 +69,9 @@ export default {
         return
       }
 
-      localStorage.token = req.data.token
       this.error = false
+      localStorage.token = req.data.token
+      this.$store.dispatch('login')
 
       this.$router.replace(this.$route.query.redirect || '/authors')
     },
