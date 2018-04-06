@@ -1,5 +1,7 @@
 # bookstore-tutorial-frontend
 
+blah
+
 > A Vue.js project
 
 ## Build Setup
